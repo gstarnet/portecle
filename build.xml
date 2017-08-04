@@ -1,0 +1,290 @@
+<?xml version="1.0"?>
+
+<project name="portecle" basedir="." default="jar" xmlns:p="urn:net.sf.portecle">
+
+  <property name="version" value="1.10" />
+  <property name="helpbaseurl.default" value="/doc" />
+
+  <property file="build.properties" />
+
+  <!--
+  To build portecle.jar with no Class-Path MANIFEST.MF attribute,
+  set jar.classpath to an empty value in build.properties or command line.
+  -->
+  <property name="jar.classpath" value="bcprov.jar bcpkix.jar" />
+
+  <property name="helpbaseurl" value="${helpbaseurl.default}" />
+
+  <property name="root" value="." />
+  <property name="src" value="${root}/src" />
+  <property name="build" value="${root}/build" />
+  <property name="dist" value="${root}/dist" />
+  <property name="lib" value="${root}/lib" />
+
+  <property name="jar" value="portecle.jar" />
+  <property name="doc" value="${root}/doc" />
+
+  <property name="bcprov.jar" value="${lib}/bcprov-jdk15on-154.jar" />
+  <property name="bcpkix.jar" value="${lib}/bcpkix-jdk15on-154.jar" />
+  <property name="pack200.jar" value="${lib}/deployment-ant-pack200-1.0.jar"/>
+
+  <property name="build.debug" value="true" />
+  <property name="build.debuglevel" value="lines,source" />
+  <property name="build.srcver" value="1.7" />
+  <property name="build.targetver" value="1.7" />
+  <property name="build.encoding" value="UTF-8" />
+
+  <property name="apiurl.java" value="http://download.oracle.com/javase/7/docs/api/"/>
+  <property name="apiurl.bcprov" value="http://www.bouncycastle.org/docs/docs1.5on/"/>
+  <property name="apiurl.bcpkix" value="http://www.bouncycastle.org/docs/pkixdocs1.5on/"/>
+
+  <property name="jnlp.codebase" value="http://portecle.sourceforge.net/webstart/"/>
+
+  <path id="build.classpath">
+    <pathelement location="${bcprov.jar}" />
+    <pathelement location="${bcpkix.jar}" />
+  </path>
+
+  <typedef resource="org/jdesktop/deployment/ant/pack200/antlib.xml"
+           classpath="${pack200.jar}"/>
+
+  <presetdef name="signjar" uri="urn:net.sf.portecle">
+    <signjar
+      strict="true"
+      keystore="${signjar.keystore}"
+      storepass="${signjar.storepass}"
+      alias="${signjar.alias}"
+      keypass="${signjar.keypass}"
+      sigfile="PORTECLE"/>
+  </presetdef>
+
+  <presetdef name="pack200" uri="urn:net.sf.portecle">
+    <pack200 effort="9"/>
+  </presetdef>
+
+  <presetdef name="zip" uri="urn:net.sf.portecle">
+    <zip level="9"/>
+  </presetdef>
+
+  <target name="build">
+    <mkdir dir="${build}/classes" />
+    <javac
+      srcdir="${src}/main"
+      destdir="${build}/classes"
+      source="${build.srcver}"
+      target="${build.targetver}"
+      debug="${build.debug}"
+      debuglevel="${build.debuglevel}"
+      encoding="${build.encoding}"
+      includeAntRuntime="false">
+      <classpath refid="build.classpath" />
+      <compilerarg compiler="javac1.7" value="-Xlint:all,-serial" />
+    </javac>
+    <copy todir="${build}/classes">
+      <fileset dir="${src}/main" includes="**/*.properties" />
+      <filterset>
+        <filter token="VERSION" value="${version}" />
+        <filter token="HELPBASEURL" value="${helpbaseurl}" />
+      </filterset>
+    </copy>
+    <!-- Clean up possibly previously copied docs -->
+    <delete dir="${build}/classes/doc" />
+    <copy todir="${build}/classes">
+      <fileset dir="${src}/main" includes="**/*.gif,**/*.png" />
+    </copy>
+    <condition property="jar.bundle.docs">
+      <equals arg1="${helpbaseurl}" arg2="${helpbaseurl.default}" />
+    </condition>
+    <antcall target="copy-docs-to-classes" />
+  </target>
+
+  <!-- Internal: copy docs for inclusion in jar. -->
+  <target name="copy-docs-to-classes" if="jar.bundle.docs">
+    <copy todir="${build}/classes">
+      <fileset dir="${root}" includes="doc/**"
+        excludes="doc/index.html doc/**/keytool.png doc/.htaccess doc/favicon.ico" />
+    </copy>
+  </target>
+
+  <target name="jar" depends="build" description="Builds the Portecle jar">
+    <jar jarfile="${build}/${jar}">
+      <manifest>
+        <attribute name="Main-Class" value="net.sf.portecle.FPortecle" />
+        <attribute name="SplashScreen-Image" value="net/sf/portecle/images/splash.png" />
+        <attribute name="Implementation-Title" value="Portecle" />
+        <attribute name="Implementation-Version" value="${version}" />
+        <attribute name="Implementation-Vendor" value="The Portecle Project" />
+        <attribute name="Implementation-Vendor-Id" value="net.sf.portecle" />
+        <attribute name="Implementation-URL" value="http://portecle.sourceforge.net/" />
+        <attribute name="Permissions" value="all-permissions" />
+      </manifest>
+      <fileset dir="${build}/classes" includes="*/**" />
+    </jar>
+
+    <condition property="jar.classpath.set">
+      <and>
+        <isset property="jar.classpath" />
+        <not><equals arg1="${jar.classpath}" arg2="" trim="true" /></not>
+      </and>
+    </condition>
+    <antcall target="jar-classpath" />
+  </target>
+
+  <!-- Internal: updates jar's Class-Path. -->
+  <target name="jar-classpath" if="jar.classpath.set">
+    <jar jarfile="${build}/${jar}" update="true">
+      <manifest>
+        <attribute name="Class-Path" value="${jar.classpath}" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="webstart" depends="jar" description="Builds Java Web Start dir">
+    <mkdir dir="${build}/webstart"/>
+
+    <copy todir="${build}/webstart" flatten="true" preservelastmodified="true">
+      <fileset dir="${src}">
+        <include name="main/net/sf/portecle/images/splash.png"/>
+        <include name="icons/portecle.png"/>
+      </fileset>
+    </copy>
+    <length property="iconsize" file="${build}/webstart/portecle.png"/>
+    <length property="splashsize" file="${build}/webstart/splash.png"/>
+
+    <copy file="${bcprov.jar}" tofile="${build}/webstart/bcprov.jar"/>
+    <copy file="${bcpkix.jar}" tofile="${build}/webstart/bcpkix.jar"/>
+    <p:signjar digestalg="SHA-1">
+      <fileset dir="${build}/webstart" includes="bc*.jar"/>
+    </p:signjar>
+    <length property="bcjarsize" file="${build}/webstart/bcprov.jar" />
+    <length property="bcxjarsize" file="${build}/webstart/bcpkix.jar" />
+
+    <copy file="${src}/etc/portecle.jnlp" tofile="${build}/webstart/APPLICATION_TEMPLATE.JNLP" overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${version}" />
+        <filter token="CODEBASE" value="${jnlp.codebase}" />
+        <filter token="JARSIZE" value="*" />
+        <filter token="BCJARSIZE" value="${bcjarsize}" />
+        <filter token="BCXJARSIZE" value="${bcxjarsize}" />
+        <filter token="ICONSIZE" value="${iconsize}" />
+        <filter token="SPLASHSIZE" value="${splashsize}" />
+      </filterset>
+    </copy>
+    <xmlvalidate file="${build}/webstart/APPLICATION_TEMPLATE.JNLP"/>
+
+    <copy file="${build}/${jar}" todir="${build}/webstart"/>
+    <jar jarfile="${build}/webstart/${jar}" update="true">
+      <zipfileset file="${build}/webstart/APPLICATION_TEMPLATE.JNLP" prefix="JNLP-INF"/>
+    </jar>
+    <p:pack200 file="${build}/webstart/${jar}" todir="${build}/webstart" repack="true" overwrite="true"/>
+
+    <p:signjar jar="${build}/webstart/${jar}"/>
+    <length property="jarsize" file="${build}/webstart/${jar}" />
+
+    <p:pack200 todir="${build}/webstart">
+      <fileset dir="${build}/webstart" includes="*.jar"/>
+      <mapper type="glob" from="*.jar" to="*.jar.pack.gz"/>
+    </p:pack200>
+
+    <copy file="${src}/etc/portecle.jnlp" todir="${build}/webstart" overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${version}" />
+        <filter token="CODEBASE" value="${jnlp.codebase}" />
+        <filter token="JARSIZE" value="${jarsize}" />
+        <filter token="BCJARSIZE" value="${bcjarsize}" />
+        <filter token="BCXJARSIZE" value="${bcxjarsize}" />
+        <filter token="ICONSIZE" value="${iconsize}" />
+        <filter token="SPLASHSIZE" value="${splashsize}" />
+      </filterset>
+    </copy>
+    <xmlvalidate file="${build}/webstart/portecle.jnlp"/>
+
+  </target>
+
+  <target name="javadoc">
+    <mkdir dir="${build}/api" />
+    <javadoc
+      destdir="${build}/api"
+      source="${build.srcver}"
+      classpathref="build.classpath"
+      private="yes"
+      encoding="${build.encoding}"
+      charset="${build.encoding}">
+      <packageset dir="${src}/main" defaultexcludes="yes">
+        <include name="net/sf/portecle/**" />
+      </packageset>
+      <link href="${apiurl.java}"/>
+      <link href="${apiurl.bcprov}"/>
+      <link href="${apiurl.bcpkix}"/>
+    </javadoc>
+  </target>
+
+  <target name="run" depends="jar" description="Runs Portecle">
+    <copy file="${bcprov.jar}" tofile="${build}/bcprov.jar" />
+    <copy file="${bcpkix.jar}" tofile="${build}/bcpkix.jar" />
+    <!-- TODO: command line args -->
+    <java fork="true" jar="build/${jar}">
+      <sysproperty key="portecle.experimental" value="true" />
+    </java>
+  </target>
+
+  <target name="bindist" depends="jar"
+    description="Builds the Portecle binary distribution">
+    <mkdir dir="${dist}" />
+    <p:zip destfile="${dist}/portecle-${version}.zip">
+      <zipfileset prefix="portecle-${version}"
+        dir="${root}" includes="README.txt,LICENSE.txt,NEWS.txt" />
+      <zipfileset prefix="portecle-${version}"
+        dir="${lib}" includes="LICENSE.bouncycastle.txt" />
+      <zipfileset prefix="portecle-${version}" file="${build}/${jar}" />
+      <zipfileset prefix="portecle-${version}"
+        dir="${src}/icons" includes="portecle.*" />
+      <zipfileset prefix="portecle-${version}"
+        dir="${src}/etc" includes="portecle.desktop,portecle.appdata.xml" />
+      <zipfileset file="${bcprov.jar}"
+        fullpath="portecle-${version}/bcprov.jar" />
+      <zipfileset file="${bcpkix.jar}"
+        fullpath="portecle-${version}/bcpkix.jar" />
+    </p:zip>
+  </target>
+
+  <target name="srcdist"
+    description="Builds the Portecle source distribution">
+    <mkdir dir="${dist}" />
+    <p:zip destfile="${dist}/portecle-${version}-src.zip">
+      <zipfileset dir="${root}" prefix="portecle-${version}-src">
+        <include name="*.txt" />
+        <include name="*.xml" />
+        <include name=".classpath" />
+        <include name=".project" />
+        <include name=".settings/**" />
+        <include name="doc/**" />
+        <include name="lib/*" />
+        <include name="src/**" />
+      </zipfileset>
+    </p:zip>
+  </target>
+
+  <target name="dist" depends="srcdist,bindist"
+    description="Builds Portecle distributions" />
+
+  <target name="all" depends="dist,javadoc"
+    description="Builds everything" />
+
+  <target name="release" depends="distclean,dist"
+    description="Builds Portecle release from scratch" />
+
+  <target name="clean">
+    <delete dir="${build}/api" />
+    <delete dir="${build}/classes" />
+    <delete dir="${build}/webstart" />
+    <delete file="${build}/${jar}" />
+    <delete file="${build}/bcprov.jar" />
+    <delete file="${build}/bcpkix.jar" />
+  </target>
+
+  <target name="distclean" depends="clean">
+    <delete dir="${dist}" />
+  </target>
+
+</project>

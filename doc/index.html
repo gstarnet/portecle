@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+  <head>
+    <title>Portecle: Home</title>
+    <link rel="stylesheet" href="help.css" type="text/css">
+    <link rel="shortcut icon" href="favicon.ico"
+          type="image/vnd.microsoft.icon">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+
+  <body>
+    <h1>Portecle</h1>
+
+    <p>
+      <b>Portecle</b> is a user friendly GUI application for creating,
+      managing and examining keystores, keys, certificates, certificate
+      requests, certificate revocation lists and more.
+    </p>
+
+    <h2 id="features">Features</h2>
+
+    <p>
+      Currently, <b>Portecle</b> can be used to, for example:
+    </p>
+
+    <ul>
+      <li>Create, load, save, and convert
+        <a href="create-keystore.html">keystores</a>.</li>
+      <li>Generate DSA and RSA key pair entries with self-signed version 1
+        X.509 certificates.</li>
+      <li>Import X.509 certificate files as trusted certificates.</li>
+      <li>Import key pairs from
+        <a href="http://www.rsasecurity.com/rsalabs/node.asp?id=2138">PKCS
+          #12</a> and PEM bundle files.</li>
+      <li>Clone and change the password of key pair entries and keystores.</li>
+      <li>View the details of certificates contained within keystore entries,
+        certificate files, and SSL/TLS connections.</li>
+      <li>Export keystore entries in a variety of formats.</li>
+      <li>Generate and view certification requests (CSRs).</li>
+      <li>Import Certificate Authority (CA) replies.</li>
+      <li>Change the password of key pair entries and keystores.</li>
+      <li>Delete, clone, and rename keystore entries.</li>
+      <li>View the details of certificate revocation list (CRL) files.</li>
+    </ul>
+
+    <h2 id="docs">Documentation</h2>
+
+    <p>
+      Take the <a href="tour.html">tour</a>.
+      Read the <a href="howtos.html">HOWTOs</a>.
+    </p>
+
+    <h2 id="shots">Screenshots</h2>
+
+    <table summary="keytool and Portecle screenshots">
+      <tbody>
+        <tr>
+          <td><a href="images/keytool.png"><img src="images/thumbs/keytool.png"
+            alt="keytool command line screenshot"
+            width="153" height="254"></a></td>
+          <td><a href="images/portecle.png"><img width="153" height="130"
+            src="images/thumbs/portecle.png" alt="Portecle screenshot"></a>
+          </td>
+        </tr>
+        <tr>
+          <td align="center">keytool</td>
+          <td align="center">Portecle</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="resources">Resources</h2>
+
+    <p>
+      For downloads, contact information and mailing lists, issue tracking
+      and other development facilities, see the
+      <a href="http://sourceforge.net/projects/portecle/">SourceForge.net
+      project page</a>.  Check also your operating system distribution to
+      see if Portecle is already included.  RPM packages of Portecle are
+      additionally available from the
+      <a href="http://www.jpackage.org/">JPackage Project</a>.
+    </p>
+ 
+    <p>
+      Portecle can be launched directly with Java Web Start
+      (Java 1.7 or later with Web Start required):
+    </p>
+
+    <p>
+      <script type="text/javascript"
+              src="https://www.java.com/js/deployJava.js"></script>
+      <script type="text/javascript">
+        var url = "http://portecle.sourceforge.net/webstart/portecle.jnlp";
+        deployJava.createWebStartLaunchButton(url, '1.7.0');
+      </script>
+    </p>
+    <noscript>
+      <p><a href="http://portecle.sourceforge.net/webstart/portecle.jnlp">http://portecle.sourceforge.net/webstart/portecle.jnlp</a></p>
+    </noscript>
+
+    <h2 id="ack">Acknowledgments</h2>
+
+    <p>
+      Most of the cryptographic functionality of this program is implemented
+      using the <a href="http://www.bouncycastle.org/java.html">Bouncy Castle
+        Crypto APIs</a>.  GNU Keyring (GKR) keystores are supported using the
+      providers in <a href="http://www.gnu.org/software/classpath/">GNU
+      Classpath</a> (if installed).
+    </p>
+
+    <p>
+      The help facility was adapted from work by Dave Seaton.
+    </p>
+
+    <p>
+      <a href="http://sourceforge.net/projects/portecle/"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=118439&amp;type=13" width="120" height="30" alt="Get Portecle at SourceForge.net. Fast, secure and Free Open Source software downloads" style="border: 0"></a>
+    </p>
+
+    <h2 id="license">Copyright and License</h2>
+
+    <pre>
+Copyright &copy; 2004 Wayne Grant
+            2004 Mark Majczyk
+            2004-2016 Ville Skyttä</pre>
+
+    <p>
+      Portecle is free software; you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by the
+      Free Software Foundation; either
+      <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">version
+        2 of the License</a>, or (at your option) any later version.
+    </p>
+    <p>
+      Portecle is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+      General Public License for more details.
+    </p>
+
+  </body>
+</html>

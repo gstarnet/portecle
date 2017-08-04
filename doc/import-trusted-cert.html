@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+  <head>
+    <title>Portecle: How to import a trusted certificate</title>
+    <link rel="stylesheet" href="help.css" type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+
+  <body>
+
+    <h1>How to import a trusted certificate</h1>
+    <hr>
+
+    <p>
+      To import a trusted certificate into a keystore from file:
+    </p>
+
+    <ol>
+      <li>From the <b>Tools</b> menu, choose <b>Import Trusted Certificate</b>.
+        Alternatively click on the <b>Import Trusted Certificate</b> toolbar
+        button:<br>
+        <img src="importcert.gif" alt="Import trusted certificate icon"
+             width="16" height="16"></li>
+
+      <li>The <b>Import Trusted Certificate</b> dialog will appear.</li>
+
+      <li>Select the folder where the certificate file is stored.</li>
+
+      <li>Click on the required certificate file or type the filename
+        into the <b>File Name</b> text box.</li>
+
+      <li>Click on the <b>Import</b> button.</li>
+
+      <li>If Portecle cannot establish a trust path from the certificate in
+        the file to an existing self-signed trusted certificate in your
+        keystore (or the CA certs keystore if it is enabled):
+        <ul>
+          <li>The <b>Certificate Details</b> dialog will be displayed.</li>
+          <li>After viewing the details acknowledge the dialog by
+            pressing the <b>OK</b> button.</li>
+          <li>A further dialog will appear asking if you wish accept the
+            certificate.</li>
+          <li>Press the <b>Yes</b> button if you wish to trust the
+            certificate and import it and <b>No</b> if you do not.  If you
+            answer <b>No</b> the import will abort.</li>
+        </ul>
+      </li>
+
+      <li>The <b>Trusted Certificate Alias</b> dialog will appear.</li>
+
+      <li>Enter the alias of the new trusted certificate and press
+        <b>OK</b>.</li>
+
+      <li>The new trusted certificate entry will appear in the keystore
+        Entries table with the chosen alias.</li>
+    </ol>
+
+    <p>
+      <b>Shortcut key:</b> Ctrl-T.
+    </p>
+
+    <hr>
+  </body>
+</html>
